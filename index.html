@@ -5,7 +5,7 @@
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/underscore/underscore.js"></script>
     <script src="bower_components/angular/angular.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="bower_components/socket.io-client/socket.io.js"></script>
 
     <link rel="stylesheet" type="text/css"
           href="bower_components/bootstrap/dist/css/bootstrap.min.css"></link>
@@ -24,14 +24,15 @@
         <div class="col-xs-8 col-xs-offset-2">
           <h1 align="center">Square Men Game</h1>
           <div id="canvasContainer" >
-            <canvas id="gameScreen" align="center" width="320" height="320">
+            <canvas id="gameScreen" align="center" width="480" height="480">
               Your browser does not support canvasses
             </canvas>
           </div>
-          <h2><b>Game?</b></h2>
+          <h2><b>Info</b></h2>
           Black boxes are <b>other</b> players.<br/>
-          Players may <b>not collide</b>.<br/>
-          <b>WASD</b> to move.
+          Grey boxes are <b>walls</b>.<br/>
+          <b>WASD</b> to move. <b>SPACE</b> to place walls.<br/>
+
         </div>
       </div>
     </div>

@@ -10,6 +10,7 @@ var server = app.listen(8080);
 var io = require('socket.io').listen(server);
 
 var clients = [];
+var walls = [];
 
 var playerID = 0;
 
@@ -32,6 +33,10 @@ io.sockets.on('connection', function(socket){
   socket.emit('message', {message: 'welcome.', ID: playerID});
 
   console.log("Client connected. Player ID#" + playerID);
+
+  _.each(walls, function(wall) {
+    socket.emit('wallUpdate', wall);
+  });
 
   socket.on('disconnect', function() {
     // when this client disconnects
@@ -66,6 +71,12 @@ io.sockets.on('connection', function(socket){
     });
 
 
+  });
+
+  socket.on('wallCreated', function(createPoint) {
+    var wall = {x: createPoint.x, y: createPoint.y, w: 16, h:16};
+    walls.push(wall);
+    io.sockets.emit('wallUpdate', wall);
   });
 
   // update all clients with ALL player information

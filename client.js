@@ -1,8 +1,11 @@
-var socket = io('http://75.68.218.121:8080');
+var socket = io('http://localhost:8080');
 
 players = [];
+walls = [];
 
 var myPlayerID = 0;
+
+var scrw, scrh;
 
 function localplayer() {
   var pl = undefined;
@@ -15,14 +18,22 @@ function localplayer() {
 }
 
 function checkCollision(x,y) {
-  if(x < 0 || y < 0 || x >= 320 || y >= 320)
+  if(x < 0 || y < 0 || x >= scrw || y >= scrh)
     return true;
-    
+
   var coll = false;
   _.each(players, function(player){
 
     if(x >= player.x && x < player.x+16)
       if(y >= player.y && y < player.y+16)
+        coll = true;
+
+  });
+
+  _.each(walls, function(wall){
+
+    if(x >= wall.x && x < wall.x+16)
+      if(y >= wall.y && y < wall.y+16)
         coll = true;
 
   });
@@ -45,6 +56,10 @@ socket.on('playerDestroy', function(playerDestroyData) {
   }
 
   players.splice(i, 1);
+});
+
+socket.on('wallUpdate', function(wallData) {
+  walls.push(wallData);
 });
 
 socket.on('playerUpdate', function(playerData) {
@@ -73,8 +88,8 @@ $(document).ready( function() {
   var gameCanvas = $("#gameScreen")[0];
   // get context
   var ctx = gameCanvas.getContext('2d');
-  var w = $('#gameScreen').width();
-  var h = $('#gameScreen').height();
+  scrw = $('#gameScreen').width();
+  scrh = $('#gameScreen').height();
 
   if(typeof timer != "undefined")
     clearInterval(timer);
@@ -84,40 +99,53 @@ $(document).ready( function() {
     ctx.fillRect(player.x,player.y,16,16);
   }
 
+  function draw_wall(wall, sty) {
+    ctx.fillStyle = sty;
+    ctx.fillRect(wall.x, wall.y, wall.w, wall.h);
+  }
+
   function game_tick() {
     //gameCanvas.width = gameCanvas.width;
     ctx.fillStyle = "#efefef";
-    ctx.fillRect(0,0, w,h);
+    ctx.fillRect(0,0, scrw,scrh);
+
+    _.each(walls, function(wall) {
+      draw_wall(wall, "#a3a3a3");
+    });
 
     _.each(players, function(player) {
-        if(player.plID == myPlayerID)
-          draw_player(player, "red");
-        else
-          draw_player(player, "black");
+      if(player.plID == myPlayerID)
+        draw_player(player, "red");
+      else
+        draw_player(player, "black");
     });
+
+
   }
 
   timer = setInterval(game_tick, 10);
 
+  $('#gameScreen').attr('tabindex', '0');
 
   $(document).on("keydown", function(event){
     var ox = localplayer().x;
     var oy = localplayer().y;
 
-    if(event.which == 65) //a
+    if(event.which == 65 || event.which == 37) //a
       if(!checkCollision(localplayer().x-16, localplayer().y))
         localplayer().x-=16;
-    if(event.which == 68) //d
+    if(event.which == 68 || event.which == 39) //d
       if(!checkCollision(localplayer().x+16, localplayer().y))
         localplayer().x+=16;
-    if(event.which == 87) //w
+    if(event.which == 87 || event.which == 38) //w
       if(!checkCollision(localplayer().x, localplayer().y-16))
         localplayer().y-=16;
-    if(event.which == 83) //s
+    if(event.which == 83 || event.which == 40) //s
       if(!checkCollision(localplayer().x, localplayer().y+16))
         localplayer().y+=16;
 
-
+    if(event.which == 32)
+      socket.emit('wallCreated', { x: localplayer().x, y: localplayer().y });
 
     var dx = localplayer().x-ox;
     var dy = localplayer().y-oy;
