@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <title>WebTwo</title>
+
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/underscore/underscore.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <link rel="stylesheet" type="text/css"
+          href="bower_components/bootstrap/dist/css/bootstrap.min.css"></link>
+
+    <link rel="stylesheet" type="text/css"
+          href="bower_components/bootstrap/dist/css/bootstrap-theme.min.css"></link>
+
+    <link rel="stylesheet" type="text/css" href="style.css"></link>
+
+  </head>
+
+  <body>
+
+    <div class="container">
+      <div class="row" id="mainPage">
+        <div class="col-xs-8 col-xs-offset-2">
+          <h1 align="center">Multiplayer Test</h1>
+          <div id="canvasContainer" >
+            <canvas id="gameScreen" align="center" width="320" height="320">
+              Your browser does not support canvasses
+            </canvas>
+          </div>
+          <h2><b>Game?</b></h2>
+          Black boxes are <b>other</b> players.<br/>
+          Players may <b>not collide</b>.<br/>
+          <b>WASD</b> to move.
+        </div>
+      </div>
+    </div>
+
+  </body>
+
+
+<!-- Now that the website is loaded, initialize the client  //-->
+  <script src="client.js"></script>
+</html>
